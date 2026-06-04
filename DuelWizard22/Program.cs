@@ -1,83 +1,110 @@
-﻿using System;
+﻿using System.Net.Http.Metrics;
+using System.Runtime.InteropServices;
 
-class Wizard
+wizard WizardA = new wizard("Arges", 10);
+wizard WizardB = new wizard("Rafa", 20);
+
+Console.WriteLine("Permainan dimulaaiii!!\n");
+Console.WriteLine("Statistik awal");
+WizardA.ShowStats();
+WizardB.ShowStats();
+
+string pilihan;
+
+while (true)
 {
-    // Field
+    Console.Clear();
+
+    Console.WriteLine($"1. {WizardA.Name} menyerang {WizardB.Name}");
+    Console.WriteLine($"2. {WizardB.Name} menyerang {WizardA.Name}");
+    Console.WriteLine($"3. {WizardA.Name} melakukan heal");
+    Console.WriteLine($"4. {WizardB.Name} melakukan heal");
+
+    Console.WriteLine("\n Pilihanmu (1/2/3/4): ");
+    pilihan = Console.ReadLine();
+
+    if (pilihan == "1") WizardA.Attack(WizardB);
+    else if (pilihan == "2") WizardB.Attack(WizardA);
+    else if (pilihan == "3") WizardA.Heal();
+    else if (pilihan == "4") WizardB.Heal();
+    else Console.WriteLine("Pilihan tidak valid");
+
+    if (WizardA.Energy <= 0 || WizardB.Energy <= 0)
+    {
+        Console.WriteLine("Permainan berakhir!");
+        if (WizardA.Energy > WizardB.Energy)
+        {
+            Console.WriteLine($"{WizardB.Name} berhasil dikalahkan !");
+            Console.WriteLine($"{WizardA.Name} Keluar sebagai pemenangnya !");
+        }
+        else
+        {
+            Console.WriteLine($"{WizardA} berhasil dikalahkan !");
+            Console.WriteLine($"{WizardB.Name} keluar sebagai pemenangnya !");
+        }
+
+        break;
+    }
+
+    Console.ReadLine();
+}
+
+//WizardA.Attack(WizardB);
+//WizardB.Attack(WizardA);
+//WizardA.Attack(WizardB);
+//WizardB.Attack(WizardA);
+//WizardA.Heal();
+
+Console.WriteLine("Permainan selesai.....\n");
+Console.WriteLine("Statistik akhir");
+WizardA.ShowStats();
+WizardB.ShowStats();
+
+public class wizard
+{
     public string Name;
     public int Energy;
     public int Damage;
 
-    // Constructor
-    public Wizard(string name, int damage)
+    public wizard(string name, int damage)
     {
         Name = name;
         Energy = 100;
         Damage = damage;
     }
 
-    // Method Attack
-    public void Attack(Wizard lawan)
-    {
-        lawan.Energy -= Damage;
-
-        if (lawan.Energy < 0)
-        {
-            lawan.Energy = 0;
-        }
-
-        Console.WriteLine(Name + " menyerang " + lawan.Name);
-        Console.WriteLine("Sisa energi " + lawan.Name + ": " + lawan.Energy);
-        Console.WriteLine();
-    }
-
-    // Method Heal
-    public void Heal()
-    {
-        Energy += 5;
-
-        if (Energy > 100)
-        {
-            Energy = 100;
-        }
-
-        Console.WriteLine(Name + " melakukan Heal.");
-        Console.WriteLine("Energi sekarang: " + Energy);
-        Console.WriteLine();
-    }
-
-    // Method ShowStats
     public void ShowStats()
     {
-        Console.WriteLine("Nama   : " + Name);
-        Console.WriteLine("Energi : " + Energy);
-        Console.WriteLine("Damage : " + Damage);
-        Console.WriteLine();
+        Console.WriteLine($"Name: {Name}");
+        Console.WriteLine($"Energy: {Energy}\n");
     }
-}
 
-class Program
-{
-    static void Main(string[] args)
+    public void Attack(wizard enemy)
     {
-        // Membuat 2 object Wizard
-        Wizard wizard1 = new Wizard("Gandalf", 20);
-        Wizard wizard2 = new Wizard("Merlin", 15);
-
-        Console.WriteLine("=== STATUS AWAL ===");
-        wizard1.ShowStats();
-        wizard2.ShowStats();
-
-        // Skenario battle
-        wizard1.Attack(wizard2);
-        wizard2.Attack(wizard1);
-        wizard1.Attack(wizard2);
-
-        Console.WriteLine("=== STATUS AKHIR ===");
-        wizard1.ShowStats();
-        wizard2.ShowStats();
-
-        // Heal
-        wizard1.Heal();
-        wizard2.Heal();
+        enemy.Energy -= Damage;
+        Console.WriteLine($"{Name} menyerang {enemy.Energy}");
+        Console.WriteLine($"Sisa eneri {enemy.Name}: {enemy.Energy}\n");
     }
+
+    public void Heal()
+    {
+        if (Energy >= 100)
+        {
+            Console.WriteLine("Gagal melakukan heal. Energi sudah mencapai maksimal!");
+        }
+        else
+        {
+            if (Energy > 95)
+            {
+                Energy = 100;
+            }
+            else
+            {
+                Energy += 5;
+            }
+            Console.WriteLine($"{Name} berhasil melakukan heal. Energi meningkat menjadi {Energy} ");
+        }
+
+    }
+
 }
